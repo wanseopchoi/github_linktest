@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue Jul 23 11:23:45 2024
+
+@author: younjae.lee
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Feb 20 13:50:17 2024
 
 @author: younjae.lee
@@ -9,10 +16,12 @@ import numpy as np
 import pandas as pd
 import os
 
+
 def FeatureRename(data, Name):
     data.columns = Name
 
     return data
+
 
 def CalBase(data):
     Base = data.mean(numeric_only=True)
@@ -20,6 +29,7 @@ def CalBase(data):
     Base['SGP4x_3'] = data.SGP4x_3.max(numeric_only=True)
 
     return Base
+
 
 def RawDataInterpolation(RawData):
     TIndex = pd.to_datetime(RawData['datetime'])
@@ -32,6 +42,7 @@ def RawDataInterpolation(RawData):
 
     return Int_df
 
+
 def EventDetection(label_data):
     Event = pd.DataFrame()
     for i in range(len(label_data)):
@@ -41,6 +52,7 @@ def EventDetection(label_data):
                 Event = pd.concat([Event, label_data.iloc[i, :]], axis=1)
     Event = Event.transpose()
     return Event
+
 
 def MakeEvent_df(Event, Int_df):
     EIndex = pd.to_datetime(Event['datetime'])
@@ -59,6 +71,7 @@ def MakeEvent_df(Event, Int_df):
     rdf = rdf.fillna(method='pad')
 
     return rdf, StartTime, EndTime
+
 
 def Cal_Sdata(RawData, FeatureList):
     data = RawData.copy()
@@ -79,6 +92,27 @@ def Cal_Sdata(RawData, FeatureList):
 
     data['PM10'] = data['PM10'] / 100
 
+    data['Ratio_NC0_5_0'] = data['NC1_0'] / data[' NC0_5']
+    data['Ratio_NC0_5_1'] = data[' NC2_5'] / data[' NC0_5']
+    data['Ratio_NC0_5_2'] = data[' NC4_0'] / data[' NC0_5']
+    data['Ratio_NC0_5_3'] = data[' NC10_0'] / data[' NC0_5']
+    data['Ratio_NC1_0_0'] = data[' NC0_5'] / data['NC1_0']
+    data['Ratio_NC1_0_1'] = data[' NC2_5'] / data['NC1_0']
+    data['Ratio_NC1_0_2'] = data[' NC4_0'] / data['NC1_0']
+    data['Ratio_NC1_0_3'] = data[' NC10_0'] / data['NC1_0']
+    data['Ratio_NC2_5_0'] = data[' NC0_5'] / data[' NC2_5']
+    data['Ratio_NC2_5_1'] = data['NC1_0'] / data[' NC2_5']
+    data['Ratio_NC2_5_2'] = data[' NC4_0'] / data[' NC2_5']
+    data['Ratio_NC2_5_3'] = data[' NC10_0'] / data[' NC2_5']
+    data['Ratio_NC4_0_0'] = data[' NC0_5'] / data[' NC4_0']
+    data['Ratio_NC4_0_1'] = data['NC1_0'] / data[' NC4_0']
+    data['Ratio_NC4_0_2'] = data[' NC2_5'] / data[' NC4_0']
+    data['Ratio_NC4_0_3'] = data[' NC10_0'] / data[' NC4_0']
+    data['Ratio_NC10_0_0'] = data[' NC0_5'] / data[' NC10_0']
+    data['Ratio_NC10_0_1'] = data['NC1_0'] / data[' NC10_0']
+    data['Ratio_NC10_0_2'] = data[' NC2_5'] / data[' NC10_0']
+    data['Ratio_NC10_0_3'] = data[' NC4_0'] / data[' NC10_0']
+
     feature = ['datetime', 'rPM10', 'rPM25', 'rPM1', 'PM10', 'PM25', 'PM1', 'OPT_PM01', 'OPT_PM02', 'OPT_PM04',
                'OPT_PM10', 'Temp', 'Humi',
                'S_SGP40_0', 'S_SGP40_1', 'S_SGP40_2', 'S_SGP40_3', 'OPT_NCu5', 'OPT_NC01', 'OPT_NC02', 'OPT_NC04',
@@ -88,6 +122,7 @@ def Cal_Sdata(RawData, FeatureList):
 
     return data, Base
 
+
 def add_Ratio(data):
     data['Ratio_SGP40_0'] = data['S_SGP40_0'] / data['PM10']
     data['Ratio_SGP40_1'] = data['S_SGP40_1'] / data['PM10']
@@ -95,6 +130,7 @@ def add_Ratio(data):
     data['Ratio_SGP40_3'] = data['S_SGP40_3'] / data['PM10']
 
     return data
+
 
 def add_Diff(data):
     n = 60
@@ -106,6 +142,32 @@ def add_Diff(data):
     data = data.dropna()
 
     return data
+
+
+def add_Ratio_NC(data):
+    data['Ratio_NC0_5_0'] = data['NC1_0'] / data[' NC0_5']
+    data['Ratio_NC0_5_1'] = data[' NC2_5'] / data[' NC0_5']
+    data['Ratio_NC0_5_2'] = data[' NC4_0'] / data[' NC0_5']
+    data['Ratio_NC0_5_3'] = data[' NC10_0'] / data[' NC0_5']
+    data['Ratio_NC1_0_0'] = data[' NC0_5'] / data['NC1_0']
+    data['Ratio_NC1_0_1'] = data[' NC2_5'] / data['NC1_0']
+    data['Ratio_NC1_0_2'] = data[' NC4_0'] / data['NC1_0']
+    data['Ratio_NC1_0_3'] = data[' NC10_0'] / data['NC1_0']
+    data['Ratio_NC2_5_0'] = data[' NC0_5'] / data[' NC2_5']
+    data['Ratio_NC2_5_1'] = data['NC1_0'] / data[' NC2_5']
+    data['Ratio_NC2_5_2'] = data[' NC4_0'] / data[' NC2_5']
+    data['Ratio_NC2_5_3'] = data[' NC10_0'] / data[' NC2_5']
+    data['Ratio_NC4_0_0'] = data[' NC0_5'] / data[' NC4_0']
+    data['Ratio_NC4_0_1'] = data['NC1_0'] / data[' NC4_0']
+    data['Ratio_NC4_0_2'] = data[' NC2_5'] / data[' NC4_0']
+    data['Ratio_NC4_0_3'] = data[' NC10_0'] / data[' NC4_0']
+    data['Ratio_NC10_0_0'] = data[' NC0_5'] / data[' NC10_0']
+    data['Ratio_NC10_0_1'] = data['NC1_0'] / data[' NC10_0']
+    data['Ratio_NC10_0_2'] = data[' NC2_5'] / data[' NC10_0']
+    data['Ratio_NC10_0_3'] = data[' NC4_0'] / data[' NC10_0']
+
+    return data
+
 
 def Process(data, label):
     data['datetime'] = data.DATE + ' ' + data.TIME
@@ -130,6 +192,7 @@ def Process(data, label):
     SData, Base = Cal_Sdata(RawData, FeatureList)
     SData = add_Ratio(SData)
     # SData=add_Diff(SData)
+    SData = add_Ratio_NC(SData)
 
     Int_df = RawDataInterpolation(SData)
     Event = EventDetection(label_data)
@@ -143,6 +206,7 @@ def Process(data, label):
     plt.title(Event_df.index[0])
 
     return Int_df, Event_df, Event
+
 
 path = './All/'
 file_list = os.listdir(path)
@@ -174,6 +238,6 @@ for i in range(len(RawData)):
 filtered_All_df = All_df[(All_df['label_4'] == 1) & (All_df['Cook'].isin([1, 3]))]  # 유증기 요리만 추출, 삼겹살과 고등어만
 print(filtered_All_df)
 
-filtered_All_df.to_csv('All.csv')
+filtered_All_df.to_csv('All_code_r.csv')
 
 # All_df.to_csv('All_10.csv')
