@@ -38,7 +38,8 @@ def RawDataInterpolation(RawData):
     df = df.astype(float)
 
     rdf = df.resample(rule='S').mean()
-    Int_df = rdf.interpolate('cubic')
+    # Int_df=rdf.interpolate('cubic')
+    Int_df = rdf.interpolate()
 
     return Int_df
 
@@ -235,9 +236,10 @@ for i in range(len(RawData)):
     Int_df, Event_df, Event = Process(data, label)
     All_df = pd.concat([All_df, Int_df])
 
-filtered_All_df = All_df[(All_df['label_4'] == 1) & (All_df['Cook'].isin([1, 3]))]  # 유증기 요리만 추출, 삼겹살과 고등어만
+filtered_All_df = All_df[(All_df['label_4'] == 1) & (All_df['Cook'].isin([1, 3]))]  # 유증기 요리만 추출, 삼겹살1, 고등어3
+# filtered_All_df = All_df[(All_df['label_4'] == 3) & (All_df['Cook'].isin([42,43,45,47,48]))]  # 유증기 요리만 추출, 삼겹살과 고등어만
 print(filtered_All_df)
 
-filtered_All_df.to_csv('All_code_r.csv')
+filtered_All_df.to_csv('All_oilcode.csv')
 
 # All_df.to_csv('All_10.csv')
